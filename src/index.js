@@ -5,6 +5,7 @@ import setTruckLocation from './pages/set-truck-location.js';
 import getOneTruck from './pages/location/get-one-truck.js';
 import addNewParcel from './pages/parcel/add-parcel.js';
 import getParcelDetails from './pages/parcel/get-details.js';
+import getAllParcel from './pages/parcel/all-parcel.js';
 
 
 const app = express()
@@ -33,6 +34,8 @@ app.post('/location/get-one-truck', getOneTruck)
 // ---- Parcel ---- //
 app.post('/parcel/add-new', addNewParcel)
 app.post('/parcel/get-details', getParcelDetails)
+app.post('/parcel/all-parcel', getAllParcel)
+
 
 app.listen(port, () => {
     console.log(`Backend listening at http://localhost:${port}`)
