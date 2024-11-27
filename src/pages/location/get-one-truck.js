@@ -23,7 +23,8 @@ async function getOneTruck(req, res, next) {
             "truckId": id
         };
 
-        const result = await parcels.findOne(query);
+        const result = await parcels.findOne(query, { sort: { timestamp: -1 } });
+
 
         console.log(result)
 

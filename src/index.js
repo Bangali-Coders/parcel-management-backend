@@ -1,15 +1,36 @@
-import express from 'express'
+import cors from 'cors';
 import * as dotenv from 'dotenv';
-import cors from 'cors'
-import setTruckLocation from './pages/set-truck-location.js';
+import express from 'express';
 import getOneTruck from './pages/location/get-one-truck.js';
 import addNewParcel from './pages/parcel/add-parcel.js';
-import getParcelDetails from './pages/parcel/get-details.js';
 import getAllParcel from './pages/parcel/all-parcel.js';
+import fetchParcelStatus from './pages/parcel/fetch-all-parcel-status.js';
+import getParcelDetails from './pages/parcel/get-details.js';
+import setTruckLocation from './pages/set-truck-location.js';
+
+import deleteParcel from './pages/parcel/delete-parcel.js';
+import parcelStatus from './pages/parcel/parcel-status.js';
+import addNewPostOffice from './pages/post/add-post.js';
+import getAllPost from './pages/post/allpost.js';
+import deletePost from './pages/post/delete-post.js';
+import addNewVehicle from './pages/vehicle/add-new.js';
+import getAllVehicle from './pages/vehicle/all-vehicle.js';
+import deleteVehicle from './pages/vehicle/delete-vehicle.js';
+import sendMail from './sendMail.js';
+
+import load from './pages/parcel/parcels.js';
+import statistics from './pages/statistics.js';
+import addNewUser from './pages/user/add-user.js';
+import deleteUser from './pages/user/delete-user.js';
+import getAllUser from './pages/user/get-details.js';
+import fetchPostOffice from './pages/post/search-post.js';
+
+import generateApiKey from './pages/third-party/api-generator.js'; // Import the API key generator
 
 
 const app = express()
 const port = 4000 || process.env.PORT
+// const port = process.env.PORT
 
 // set dotenv
 dotenv.config();
@@ -28,13 +49,56 @@ app.get('/', (req, res) => {
 })
 
 // ---- Truck Location ---- //
-app.post('/set-truck-location', setTruckLocation)
-app.post('/location/get-one-truck', getOneTruck)
+app.post('/set-truck-location', setTruckLocation)//saptarshi
+app.post('/location/get-one-truck', getOneTruck) // saptarshi
+
 
 // ---- Parcel ---- //
-app.post('/parcel/add-new', addNewParcel)
-app.post('/parcel/get-details', getParcelDetails)
-app.post('/parcel/all-parcel', getAllParcel)
+app.post('/parcel/add-new', addNewParcel) // saptarshi
+app.post('/parcel/get-details', getParcelDetails) // saptarshi
+app.post('/parcel/all-parcel', getAllParcel) //debajyoti
+app.post('/parcel/delete-parcel', deleteParcel) // debajyoti
+app.post('/parcel/parcel-status', parcelStatus) // debajyoti
+app.post('/parcel/fetch-all-parcel-status', fetchParcelStatus) // debajyoti
+app.post('/parcel/parcels',load)//shamba
+
+
+// ---- Vehicle ---- //
+app.post('/vehicle/add-new', addNewVehicle)//saptarshi
+app.post('/vehicle/all-vehicle', getAllVehicle) //debajyoti
+app.post('/vehicle/delete-vehicle', deleteVehicle) //debajyoti
+
+
+// ----- Email ---- //
+app.post('/send-mail', sendMail); //debajyoti
+
+// ----- Statistics ---- //
+app.post('/statistics',statistics); //shamba
+
+
+// ---- Post Office ---- //
+app.post('/post-office/add-new', addNewPostOffice)//saptarshi
+app.post('/post-office/delete-post', deletePost) // debajyoti
+app.post('/post/allpost',getAllPost) // shamba
+app.post('/post/search-post', fetchPostOffice) // debajyoti
+
+
+// ---- User ---- //
+app.post('/user/get-details', getAllUser) // debajyoti
+app.post('/user/add-user', addNewUser) // debajyoti
+app.post('/user/delete-user', deleteUser) // debajyoti
+
+
+// ---- Cron job ---- //
+
+
+// ---- 3pl integration ---- //
+
+// Define a route to generate an API key
+// app.get('/generate-api-key', (req, res) => {
+//     const apiKey = generateApiKey(); // Generate the API key
+//     res.json({ apiKey }); // Send the API key in the response
+// });
 
 
 app.listen(port, () => {

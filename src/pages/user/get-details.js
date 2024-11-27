@@ -1,6 +1,6 @@
 import { MongoClient, ObjectId } from 'mongodb';
 
-async function getAllParcel(req, res, next) {
+async function getAllUser(req, res, next) {
 
     // connext to mongodb database
     const uri = process.env.MONGODB_CONNECTION_URI;
@@ -9,10 +9,10 @@ async function getAllParcel(req, res, next) {
     try {
 
         const database = client.db('parcel-management-system');
-        const parcels = database.collection('parcels');
+        const users = database.collection('users');
 
         // Fetch all documents
-        const data = await parcels.find({}).toArray();
+        const data = await users.find({}).toArray();
         // console.log(data)
 
         const response = { status: "success", data: data };
@@ -27,4 +27,4 @@ async function getAllParcel(req, res, next) {
     }
 }
 
-export default getAllParcel
+export default getAllUser

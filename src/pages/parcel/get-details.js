@@ -4,6 +4,9 @@ async function getParcelDetails(req, res, next) {
     // Get the truck ID  from the request
     const { id } = req.body
 
+
+
+    
     if (!id) {
         const response = { status: "error", message: "Missing required fields in body", data: { id } }
         return res.json(response)
@@ -11,7 +14,6 @@ async function getParcelDetails(req, res, next) {
 
     // connext to mongodb database
     const uri = process.env.MONGODB_CONNECTION_URI;
-    console.log(uri)
     const client = new MongoClient(uri);
 
     try {

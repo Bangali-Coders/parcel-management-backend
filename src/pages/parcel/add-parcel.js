@@ -1,52 +1,89 @@
-import { Double, MongoClient } from 'mongodb'
+import { Double, MongoClient } from 'mongodb';
 
-async function addNewParcel(req, res, next) {
+async function addNewParcel(req, res) {
+    const {
+        name,
+        length,
+        width,
+        height,
+        weight,
+        srcPincode,
+        srcCity,
+        srcState,
+        destPincode,
+        destCity,
+        destState,
+        serviceType, // domestic or international
+        itemType // type of item
+    } = req.body;
 
-    // Get the name, length, breadth, height, weight from the request
-    const { name, length, width, height, weight } = req.body;
-
-    if (!name || !length || !width || !height || !weight) {
-        const response = { status: "error", message: "Missing required fields in body", data: { name, length, width, height, weight } }
-        return res.json(response)
+    // Validate the required fields
+    if (!name || !length || !width || !height || !weight || !srcPincode || !destPincode || !serviceType || !itemType) {
+        const response = {
+            status: "error",
+            message: "Missing required fields in the request body",
+            data: {
+                name, length, width, height, weight,
+                srcPincode, srcCity, srcState,
+                destPincode, destCity, destState,
+                serviceType, itemType
+            }
+        };
+        return res.json(response);
     }
 
-    // connext to mongodb database
+    // Connect to MongoDB
     const uri = process.env.MONGODB_CONNECTION_URI;
-    console.log(uri)
     const client = new MongoClient(uri);
-
 
     try {
         const database = client.db('parcel-management-system');
         const parcels = database.collection('parcels');
 
-        // create the data 
+        // Construct the document to insert
         const query = {
-            name: name,
-            length: new Double(length),
-            breadth: new Double(width),
-            height: new Double(height),
+            name,
+            dimensions: {
+                length: new Double(length),
+                width: new Double(width),
+                height: new Double(height),
+            },
             weight: new Double(weight),
-            srcPostId: "source",
-            destPostId: "destination"
-        }
+            sender: {
+                pincode: srcPincode,
+                city: srcCity,
+                state: srcState
+            },
+            receiver: {
+                pincode: destPincode,
+                city: destCity,
+                state: destState
+            },
+            serviceType, // domestic or international
+            itemType, // type of item (e.g., letter, parcel)
+            createdAt: new Date()
+        };
 
+        // Insert the parcel into the database
         const result = await parcels.insertOne(query);
 
-        // return the response
+        // Response
         const parcelId = result.insertedId;
+        const responseData = {
+            status: "success",
+            message: "Parcel added successfully",
+            id: parcelId,
+            data: query
+        };
 
-        const responeData = { status: "success", message: "Parcel added", id: parcelId, data: { name, length, width, height, weight, } }
-
-        res.json(responeData)
+        res.json(responseData);
 
     } catch (error) {
-        console.error(error)
-        res.json({ status: "error", message: "An error occurred" })
+        console.error(error);
+        res.json({ status: "error", message: "An error occurred while adding the parcel" });
     } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+        await client.close(); // Ensure client closes
     }
 }
 
-export default addNewParcel
+export default addNewParcel;
