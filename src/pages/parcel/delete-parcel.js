@@ -14,10 +14,6 @@ async function deleteParcel(req, res, next) {
     const client = new MongoClient(uri);
 
     try {
-        // Validate the vehicle ID
-        // if (!ObjectId.isValid(vehicleId)) {
-        //     return res.status(400).json({ status: "error", message: "Invalid vehicle ID" });
-        // }
 
         const database = client.db('parcel-management-system');
         const parcels = database.collection('parcels');

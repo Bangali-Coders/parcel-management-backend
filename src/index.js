@@ -19,14 +19,21 @@ import deleteVehicle from './pages/vehicle/delete-vehicle.js';
 import sendMail from './sendMail.js';
 
 import load from './pages/parcel/parcels.js';
+import fetchPostOffice from './pages/post/search-post.js';
 import statistics from './pages/statistics.js';
 import addNewUser from './pages/user/add-user.js';
 import deleteUser from './pages/user/delete-user.js';
 import getAllUser from './pages/user/get-details.js';
-import fetchPostOffice from './pages/post/search-post.js';
 
 import generateApiKey from './pages/third-party/api-generator.js'; // Import the API key generator
+import addNewParcelThird from './pages/third-party/third-party-add-parcel.js';
+import viewIndividualUserOrders from './pages/third-party/third-party-individual.js';
+import viewUserOrders from './pages/third-party/third-party-view-all.js';
 
+import createTruckRoute from './pages/truck-routes/createRoute.js';
+import getOneRoute from './pages/truck-routes/getOneRoute.js';
+import getAllTruckRoutes from './pages/truck-routes/viewRoutes.js';
+import setTruckRoute from './pages/vehicle/set-route.js';
 
 const app = express()
 const port = 4000 || process.env.PORT
@@ -60,45 +67,50 @@ app.post('/parcel/all-parcel', getAllParcel) //debajyoti
 app.post('/parcel/delete-parcel', deleteParcel) // debajyoti
 app.post('/parcel/parcel-status', parcelStatus) // debajyoti
 app.post('/parcel/fetch-all-parcel-status', fetchParcelStatus) // debajyoti
-app.post('/parcel/parcels',load)//shamba
+app.post('/parcel/parcels', load)//shamba
 
 
 // ---- Vehicle ---- //
 app.post('/vehicle/add-new', addNewVehicle)//saptarshi
 app.post('/vehicle/all-vehicle', getAllVehicle) //debajyoti
 app.post('/vehicle/delete-vehicle', deleteVehicle) //debajyoti
-
+app.post('/vehicle/set-route', setTruckRoute) // saptarshi
 
 // ----- Email ---- //
 app.post('/send-mail', sendMail); //debajyoti
 
+
 // ----- Statistics ---- //
-app.post('/statistics',statistics); //shamba
+app.post('/statistics', statistics); //shamba
 
 
 // ---- Post Office ---- //
 app.post('/post-office/add-new', addNewPostOffice)//saptarshi
 app.post('/post-office/delete-post', deletePost) // debajyoti
-app.post('/post/allpost',getAllPost) // shamba
+app.post('/post/allpost', getAllPost) // shamba
 app.post('/post/search-post', fetchPostOffice) // debajyoti
 
 
-// ---- User ---- //
-app.post('/user/get-details', getAllUser) // debajyoti
+// ---- User ----app.post('/user/get-details', getAllUser) // debajyoti
 app.post('/user/add-user', addNewUser) // debajyoti
 app.post('/user/delete-user', deleteUser) // debajyoti
 
 
-// ---- Cron job ---- //
+// ---- Truck Routes ---- //
+app.post('/truck-routes/create-route', createTruckRoute); // saptarshi
+app.post('/truck-routes/get-all-routes', getAllTruckRoutes); // saptarshi
+app.post('/truck-routes/get-one-route', getOneRoute); // saptarshi
+
+
 
 
 // ---- 3pl integration ---- //
 
 // Define a route to generate an API key
-// app.get('/generate-api-key', (req, res) => {
-//     const apiKey = generateApiKey(); // Generate the API key
-//     res.json({ apiKey }); // Send the API key in the response
-// });
+app.post('/third-party/api-generator', generateApiKey) // debajyoti
+app.post('/third-party/third-party-add-parcel', addNewParcelThird) // debajyoti
+app.post('/third-party/third-party-view-all', viewUserOrders) //debajyoti
+app.post('/third-party/third-party-individual', viewIndividualUserOrders) //debajyoti
 
 
 app.listen(port, () => {

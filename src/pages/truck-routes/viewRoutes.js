@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 
-async function getAllVehicle(req, res, next) {
 
+async function getAllTruckRoutes(req, res, next) {
     // connext to mongodb database
     const uri = process.env.MONGODB_CONNECTION_URI;
     const client = new MongoClient(uri);
@@ -9,10 +9,10 @@ async function getAllVehicle(req, res, next) {
     try {
 
         const database = client.db('parcel-management-system');
-        const vehicles = database.collection('vehicles');
+        const truckRoutesCollection = database.collection('truck-routes');
 
         // Fetch all documents
-        const data = await vehicles.find({}).toArray();
+        const data = await truckRoutesCollection.find({}).toArray();
         // console.log(data)
 
         const response = { status: "success", data: data };
@@ -25,6 +25,8 @@ async function getAllVehicle(req, res, next) {
         // Ensures that the client will close when you finish/error
         await client.close();
     }
+
+
 }
 
-export default getAllVehicle
+export default getAllTruckRoutes;

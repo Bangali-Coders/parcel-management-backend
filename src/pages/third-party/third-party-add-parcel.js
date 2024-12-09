@@ -1,6 +1,13 @@
 import { Double, MongoClient } from 'mongodb';
 
-async function addNewParcel(req, res) {
+async function addNewParcelThird(req, res) {
+    
+    const {apiKey, parcelData} = req.body;
+    if(!apiKey || !parcelData){
+        const response = { status: "error", message: "Missing required fields in body", data: {apiKey, parcelData} }
+        return res.json(response)
+    }
+
     const {
         name,
         length,
@@ -17,7 +24,28 @@ async function addNewParcel(req, res) {
         destCountry, // added country fields for international
         serviceType, // domestic or international
         itemType // type of item
-    } = req.body;
+    } = parcelData;
+
+    // Connect to MongoDB
+    const uri = process.env.MONGODB_CONNECTION_URI;
+    const client = new MongoClient(uri);
+
+    const database = client.db('parcel-management-system');
+    const api = database.collection('api-keys');
+    const parcels = database.collection('third-party-parcels');
+
+
+    
+    // Validate the API key
+    const validApiKey = await api.findOne({ apiKey });
+
+    // Get the userId from validApiKey
+    const userId = validApiKey.userId;
+
+    if(!validApiKey) {
+        return res.status(403).json({ status: "error", message: "Forbidden: Invalid API Key" });
+    }
+
 
     // Validate the required fields
     if (!name || !length || !breadth || !height || !weight || !srcPincode || !destPincode || !serviceType || !itemType) {
@@ -25,7 +53,7 @@ async function addNewParcel(req, res) {
             status: "error",
             message: "Missing required fields in the request body",
             data: {
-                name, length, breadth, height, weight,
+                userId, name, length, breadth, height, weight,
                 srcPincode, srcCity, srcState,
                 destPincode, destCity, destState,
                 serviceType, itemType
@@ -35,6 +63,7 @@ async function addNewParcel(req, res) {
     }
 
     // If service type is international, ensure that only country details are required for sender and receiver
+    
     if (serviceType === 'International') {
         if (!srcCountry || !destCountry) {
             const response = {
@@ -46,22 +75,19 @@ async function addNewParcel(req, res) {
         }
 
         // Remove city and state data for international parcels
-        srcCity = undefined;
-        srcState = undefined;
-        destCity = undefined;
-        destState = undefined;
+
+        // srcCity = undefined;
+        // srcState = undefined;
+        // destCity = undefined;
+        // destState = undefined;
     }
 
-    // Connect to MongoDB
-    const uri = process.env.MONGODB_CONNECTION_URI;
-    const client = new MongoClient(uri);
 
     try {
-        const database = client.db('parcel-management-system');
-        const parcels = database.collection('parcels');
 
         // Construct the document to insert
         const query = {
+            userId,
             name,
             dimensions: {
                 length: new Double(length),
@@ -71,14 +97,14 @@ async function addNewParcel(req, res) {
             weight: new Double(weight),
             sender: {
                 pincode: srcPincode,
-                city: srcCity,
-                state: srcState,
+                city: serviceType !== 'International' ? srcCity : undefined,
+                state: serviceType !== 'International' ? srcState : undefined,
                 country: serviceType === 'International' ? srcCountry : undefined // Only include country for international
             },
             receiver: {
                 pincode: destPincode,
-                city: destCity,
-                state: destState,
+                city: serviceType !== 'International' ? destCity : undefined,
+                state: serviceType !== 'International' ? destState : undefined,
                 country: serviceType === 'International' ? destCountry : undefined // Only include country for international
             },
             serviceType,
@@ -108,4 +134,4 @@ async function addNewParcel(req, res) {
     }
 }
 
-export default addNewParcel;
+export default addNewParcelThird;
