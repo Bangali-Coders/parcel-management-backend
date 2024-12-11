@@ -7,6 +7,7 @@ import getAllParcel from './pages/parcel/all-parcel.js';
 import fetchParcelStatus from './pages/parcel/fetch-all-parcel-status.js';
 import getParcelDetails from './pages/parcel/get-details.js';
 import setTruckLocation from './pages/set-truck-location.js';
+import getParcelsByPincode from './pages/parcel/fetch-parcel-pincode.js';
 
 import deleteParcel from './pages/parcel/delete-parcel.js';
 import parcelStatus from './pages/parcel/parcel-status.js';
@@ -34,6 +35,9 @@ import createTruckRoute from './pages/truck-routes/createRoute.js';
 import getOneRoute from './pages/truck-routes/getOneRoute.js';
 import getAllTruckRoutes from './pages/truck-routes/viewRoutes.js';
 import setTruckRoute from './pages/vehicle/set-route.js';
+import addNewContractor from './pages/contractor/add-new.js';
+import getAllContractor from './pages/contractor/all-contractor.js';
+import getContractorsByPincode from './pages/contractor/by-pincode.js';
 
 const app = express()
 const port = 4000 || process.env.PORT
@@ -68,6 +72,7 @@ app.post('/parcel/delete-parcel', deleteParcel) // debajyoti
 app.post('/parcel/parcel-status', parcelStatus) // debajyoti
 app.post('/parcel/fetch-all-parcel-status', fetchParcelStatus) // debajyoti
 app.post('/parcel/parcels', load)//shamba
+app.post('/parcel/get-parcel-pincode', getParcelsByPincode); // debajyoti
 
 
 // ---- Vehicle ---- //
@@ -91,7 +96,8 @@ app.post('/post/allpost', getAllPost) // shamba
 app.post('/post/search-post', fetchPostOffice) // debajyoti
 
 
-// ---- User ----app.post('/user/get-details', getAllUser) // debajyoti
+// ---- User ---- //
+app.post('/user/get-details', getAllUser) // debajyoti
 app.post('/user/add-user', addNewUser) // debajyoti
 app.post('/user/delete-user', deleteUser) // debajyoti
 
@@ -112,6 +118,11 @@ app.post('/third-party/third-party-add-parcel', addNewParcelThird) // debajyoti
 app.post('/third-party/third-party-view-all', viewUserOrders) //debajyoti
 app.post('/third-party/third-party-individual', viewIndividualUserOrders) //debajyoti
 
+
+// ---- contractor ---- //
+app.post('/contractor/add-new',addNewContractor) // shamba
+app.post('/contractor/all-contractor',getAllContractor)
+app.post('/contractor/by-pincode',getContractorsByPincode)
 
 app.listen(port, () => {
     console.log(`Backend listening at http://localhost:${port}`)
